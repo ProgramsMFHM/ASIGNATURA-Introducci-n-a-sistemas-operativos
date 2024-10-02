@@ -1,0 +1,36 @@
+\section{Datos obtenidos}
+
+La primera tarea que se debe realzar es la creación de funciones que, generen números y letras aleatorias. Para esto se hizo uso de la biblioteca `stdlib.h' que nos permite acceder a la función `rand()' que nos devuelve un número entero entre $0$ y $32767$ dada una semilla que se le pasa como parámetro.
+
+Teniendo esto en cuenta generamos las funciones `randomInt' y `randomLetter' que se pueden ver en el anexo~\ref{lst:random.h}.
+
+Adicionalmente se creó la función `delay()'  (Que se ve en el anexo~\ref{lst:delay.h}) que recibe un tiempo mínimo y uno máximo y realiza un bucle que dura un tiempo aleatorio entre los dos entregados (generando un tiempo en que el proceso está ``Pausado'').
+
+Luego de crear las funciones que generan los resultados aleatorios el siguiente paso es crear los tres procesos solicitados. Para esto se pasó por las siguientes fases.
+\begin{enumerate}
+    \item Inicialmente se intentó crear procesos que generaran items y los entregaran por la salida estándar.
+    Al hacer pruebas con esta idea se notó que no era posible guardar la información de loa archivos como se deseaba, puesto que se quería guardar la información en un archivo aparte y se intentó hacer con una redirection de la salida estándar, pero se tuvo dificultades para guardar la información en caso de detener el proceso en ún momento inesperado desde la consola.
+    \item Dado esto se decidió optar por abrir los archivos destino dentro del propio proceso, encontrando un error similar.
+    El terminar la ejecución del proceso en ocasiones no se terminaba de guardar la información en el archivo.
+    \item Se optó entonces por vaciar el buffer del archivo luego de escribir cada uno de los datos generados dentro del mismo, para esto se usó la función `fflush()' vacía el buffer de un archivo pasado como parámetro.
+    El inconveniente que se encontró con este planteamiento fue que no era posible cerrar el archivo en caso de que el procesos fuera terminado forzosamente, pero se decidió usar el sistema logrado hasta este momento.
+\end{enumerate}
+
+Con este proceso se consiguieron los procesos generadores que se encuentran en los anexos~\ref{lst:proceso1.c},~\ref{lst:proceso2.c} y~\ref{lst:proceso3.c} respectivamente. En los tres casos se crean distintos archivos que una vez ejecutados los programas pueden ser accedidos para conocer los resultados de los programas.
+
+Ahora hace falta poder ejecutar los tres procesos de manera distendida para lo cuál se hizo uso de la terminal con el comando `\&` para ejecutar procesos en segundo plano. La idea consiste en crear un cuarto programa llamado `main.c' que ejecuta los tres procesos en segundo plano mediante llamadas al sistema. Pero no sólo basta con eso puesto que al llamar al sistema se crean los procesos de manera independiente, esto quiere decir que no dependen de la ejecusión de `main.c', por lo tanto lo que se propuso fué que al ejecutar main.c se especifique un tiempo de ejecución tras el cuál los tres programas serán destruidos.
+
+Para la destrucción de los procesos se hizo uso de la función del terminal `killall' que, de acuerdo con \textcite{kilall} envía una señal (siendo por defecto una para terminarlos) a los procesos que se mencionen luego del comando.
+
+De esta manera se obtiene el resultado del archivo `main.c' presente en el anexo~\ref{lst:main.c} que ejecuta los tres procesos en segundo plano y que se puede ejecutar con el comando.
+
+La salvedad importante de mencionar en este punto es que no se consiguió generar una salvaguarda para que cuando el main sea eliminado los otros procesos también lo sean.
+
+A continuación se muestra un ejemplo con los resultados obtenidos luego de ejecutar todos los procesos durante 25 segundos (Las tablas son leidas de los archivos `.csv' generados con los procesos y son interpretadas con el código python que se muestra en el anexo~\ref{lst:tables.py}).
+
+\input{src/tables/infoproceso1.tex}
+\newpage
+\input{src/tables/infoproceso2.tex}
+\newpage
+\input{src/tables/infoproceso3.tex}
+Posteriormente será necesario analizar estos datos, comprendiendo el significado de los tiempos obtenidos.

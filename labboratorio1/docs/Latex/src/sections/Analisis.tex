@@ -1,0 +1,42 @@
+\section{Análisis y discusión de los resultados}
+
+Una vez ejecutados los tres procesos podemos obtener resultados realmente relevantes de su comportamiento.
+
+Luego de 25 segundos de ejecisoón de los tres procesos \textbf{de manera distendida} uno de ellos tardó $21.676$ segundos, otro $22.859$ segundos y el último $21.837$ segundos, todos tiempos diferentes pero cercanos. Esto ocurre debido a que todos los delays están en el mismo rango de tiempos (0 a 3 segundos).
+
+La pregunta sería qué ocurriría si suspendemos los delays. ¿Obtendríamos los mismos tiempos?. Lo más probable es que los tiempos sean similares, puesto que no hay delay alguno, pero no serían iguales puesto que el tiempo de ejecución de cada proceso es diferente (El tiempo que dedica la CPU a la ejecución de cada uno de los procesos).
+
+Además es importante recalcar un hecho importante respecto a la generación de números aleatorios y esta tiene que ver con la semilla usada. En todos los procesos mostrados en el informe se usa como semilla el tiempo actual del sistema, pero antes del uso `rand()' lo que se hace es generar un delay aleatorio y posterior a este volver a iniciar el generador de números aleatorios con el nuevo tiempo como semilla.
+
+Ahora bien, si se suprimiera esta propuesta de semilla podría ocurrir que al ejecutar múltiples instancias del mismo proceso los resultados fueran los mismos puesto que la semilla es la misma al ser ejecutados (casi) al mismo tiempo.
+
+Duranrte la realización de este experimento se comprendió el uso de comandos como `kilall' para terminar procesos, o `ps' para conocer aquellos en ejecución dentro del terminal actual; pero vale mencionar que existen otros procesos ejecutándose simultáneamoente a los ejecutados por el usuario, como se puede apreciar en el siguiente estracto de la terminal (Omitiendo parte de la salida entregada):
+
+
+\begin{lstlisting}[style=CodeStyle, language=bash]
+$ ./build/main.out &
+[1] 58006
+$ ps -A
+  PID   TTY         IME CMD
+    1     ?    00:01:25 systemd
+49579 pts/4    00:00:05 node
+49587 pts/2    00:00:01 node
+49618 pts/2    00:01:45 node
+49642 pts/2    00:00:00 node
+49717 pts/2    00:00:00 node
+49739 pts/2    00:00:00 cpptools
+49787 pts/2    00:00:06 sm-agent
+49810 pts/2    00:01:23 node
+58006 pts/0    00:00:02 main.out
+58008 pts/0    00:00:02 proceso1.out
+58010 pts/0    00:00:02 proceso2.out
+58012 pts/0    00:00:02 proceso3.out
+58026 pts/0    00:00:00 ps
+\end{lstlisting}
+
+Además podemos destacar algunas dificultades que se presentaron durante la realización del experimento:
+\begin{enumerate}
+    \item No se consiguió, con las herramientas disponibles, generar un sistema que permitiera que al eliminar el proceso principal se eliminaran los otros procesos generadores.
+    \item No se consiguió generar un salvaguarda para cerrar de manera adecuada los archivos abiertos por los procesos generadores en caso de que estos sean terminados de manera abrupta.
+    \item Al intentar abrir un mismo archivo con varios procesos al mismo tiempo, a priori no se presentaron errores, sin embargo, el archivo no queda correctamente escrito. Se puede atribuir este comportamiento a una \textins{Situación de competencia} donde los procesos intentan acceder al mismo archivo al mismo tiempo y queda escrito en este solamente la información del último proceso que accede al archivo, perdiendo información en el camino.
+\end{enumerate}

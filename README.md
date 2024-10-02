@@ -7,3 +7,7 @@ Dentro de cada laboratorio encontrará un archivo `Makefile`; ejecutando `make f
 # Laboratorios
 
 A continuación se citan los diferentes proyectos presentes en el repositorio.
+
+## Laboratorio N°1
+Dentro de la [Experiencia 1](labboratorio1/) se trabajó la creación y el manejo de procesos concurrentes con el uso del comando `&` para trabajarlos de manera distendida.
+Se profundiza además en la generación de números pseudoaleatorios comprendiendo su funcionamiento en el lenguaje `C`.
