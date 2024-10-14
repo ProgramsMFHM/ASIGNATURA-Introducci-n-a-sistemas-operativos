@@ -1,0 +1,44 @@
+\section{Resultados}
+\subsection{Programa 1: Hijo Padre Abuelo}
+El primer programa se codifico con la intención de observar e interactuar por primera vez con las funciones \verb|fork()|, \verb|getpid()| y \verb|getppid()|. Como se puede observar en el anexo~\ref{lst:arbol_gen}, el código no presenta mayor complejidad que realizar un orden correcto de duplicación de programas, al ejecutar el programa se observó como en la mayoría de los casos los datos entregados por pantalla correspondían a la salida esperada, la cual era que los programas padres estén relacionados con los programas hijos y viceversa.
+
+Sin embargo al compilar y ejecutar este código en WSL\footnote{Windows Subsystem for Linux, es una herramienta proporcionada por Microsoft dentro de sistemas Windows que permite correr un entorno Linux sobre Windows} se obtuvo, en algunas ocasiones un comportamiento inesperado como vemos en el código~\ref{lst:WSLProgram}.
+\begin{lstlisting}[language=bash, style=CodeStyle, caption={Programa Hijo Padre Abuelo en WSL}, label={lst:WSLProgram}]
+$ ./programa1.out
+Soy el padre; PID 100; PID padre 75
+Soy el hijo; PID 101; PID padre 74
+Soy el nieto; PID 102; PID padre 101
+$ ./programa1.out
+Soy el padre; PID 100; PID padre 75
+Soy el hijo; PID 103; PID padre 100
+Soy el nieto; PID 104; PID padre 105
+\end{lstlisting}
+
+Lo que ocurre es que el proceso hijo parece no ser creado por el proceso padre sino por un proceso que WSL denomina \verb|Relay(75)|, que, por lo que se logró investigar es un tipo de proceso que genera WSL para obtener un mejor rendimiento al usar el entorno Linux dentro de Windows. Sin embargo este entorno no generó dificultades a la hora de realizar los demás ejercicios.
+
+\subsection{Programa 2: Uso de hijos en C}
+Este programa fue creado de forma no muy extensa como se muestra en el anexo~\ref{lst:uso_de_hijos_ayrton}. A la hora de realizarlo no se tuvo complicaciones con los valores de las variables. Sin embargo surgió la duda de ¿qué ocurriría si todo se trabajara con un único parámetro pasado por el usuario, idea que se explora en el anexo~\ref{lst:uso_de_hijos_milton}.
+
+En este punto se observa un comportamiento interesante, ocurre que los valores de la variable modificada no se solapan, es decir que siempre se obtienen los mismos resultados, esto sugiere que al momento de ejecutar \verb|fork()| el proceso hijo conoce los valores de las variables pero no las comparte con el proceso padre ni con sus hermanos.
+\subsection{Programa 3: Resolución de una ecuación cuadrática con multiples procesos}
+Este programa es el que mas tiempo de creación tomó, no precisamente por la complejidad de lo requerido, mas bien por las dudas que surgieron durante la creación de este.
+
+La interrogante que surgió en primera instancia fue; \textbf{¿Es posible compartir recursos entre procesos duplicados?}.
+
+La dificultad para resolver esta duda radica principalmente en las herramientas y recursos limitados con los que se contaba en ese momento, lo que llevo a multiples acercamientos y formas de intentar resolver este problema.
+
+    El objetivo esencial era calcular las soluciones de la ecuación $ax^2+bx+c=0$ mediante la fórmula: \[x=\frac{-b\pm \sqrt{b^2-4ac}}{2a}\]Pero la implementación para este problema varió de diversas maneras.
+
+La primera solución,como se puede observar en los anexos~\ref{lst:cuadratica_ayrton} y~\ref{lst:cuadratic2.c}, fue utilizar archivos para comunicar entre sí a la familia de procesos. Las dos ideas puestas a cabo fueron:
+\begin{enumerate}
+    \item Generar dos hijos encargados de calcular $-b$ y $2a$ respectivamente para posteriormente que el padre calculara $\sqrt{b^2-4ac}$ y las soluciones de la ecuación.
+    \item Generar tres hijos, encargados de calcular $-b$, $2a$ y $\sqrt{b^2-4ac}$ respectivamente, el padre calculara las soluciones de la ecuación una vez que los hijos hubieran terminado su ejecución.
+\end{enumerate}
+
+Con estos programas se logro solucionar el problema de la distribución de recursos. Para comprobar que los programas funcionaban correctamente se utilizo una lista de ecuaciones entregada por el docente \docprofessor. Sin embargo, para la correcta utilización de las demás soluciones planteadas se optó por crear un programa adicional (Que puede encontrar en el anexo~\ref{lst:generador.c}) que permite generar triadas de números aleatorios para luego ser traspasados a un archivo binario con el nombre \textit{resorces.txt}, la creación de este archivo permite que sea más sencilla la lectura de muchas ecuaciones y el procesamiento por medio de los diferentes programas utilizados.
+
+Posteriormente se realizó otro programa el cual era capaz de resolver ecuaciones cuadráticas secuencialmente, (el cuál se puede encontrar en el anexo~\ref{lst:cuadratic1.c}), con el fin de comparar el tiempo de ejecución y la eficiencia de los distintos métodos utilizados. Al contrastar los datos relacionados al tiempo obtenidos, se obtuvo que los programas multiprocedurales tomaron una cantidad mucho mayor de tiempo que el programa secuencial, llegando a variar hasta en un $2200\%$.
+
+Dos soluciones más fueron llevadas a cabo, las cuales buscaban experimentar con la eficiencia de la duplicación de procesos con el fin de generar mejores conclusiones al respecto. Primeramente (como se puede observar en el anexo~\ref{lst:cuadratic3.c}) se creó un programa que generara un hijo por cada una de las ecuaciones presentes en el archivo de recursos (de ahí la importancia que fuera binario para su fácil lectura). Es importante destacar que se encontró un límite en $30960$ procesos a partir del cuál no se generan más procesos hijos. Además los tiempos de ejecución continúan siendo mayores al caso secuencial.
+
+Finalmente se llegó a una última solución basada en la memoria compartida, sin embargo para realizar esto no es tan sencillo como compartir un puntero en el mismo programa, por lo que se tuvo que utilizar dos bibliotecas; \verb|sys/ipc.h| y \verb|sys/shm.h|, bibliotecas las cuales proporcionaron funciones  que permitieron compartir memoria entre los diversos procesos. A pesar de que se evito el uso de archivos, el resultado obtenido también fue mas lento que el programa secuencial.

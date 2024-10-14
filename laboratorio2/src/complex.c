@@ -106,10 +106,10 @@ float mod(complex x)
     return sqrt(x.real*x.real + x.imaginary*x.imaginary);
 }
 
-void printComplex(complex x)
+void printComplex(FILE* stream, complex x)
 {
     if(x.imaginary<0)
-        printf("%.3f - %.3f i", x.real, -x.imaginary);
+        fprintf(stream,"%.3f - %.3f i", x.real, -x.imaginary);
     else
-        printf("%.3f + %.3f i", x.real, x.imaginary);
+        fprintf(stream,"%.3f + %.3f i", x.real, x.imaginary);
 }

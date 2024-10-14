@@ -18,6 +18,5 @@ complex dif(complex x, complex y);
 complex mult(complex x, complex y);
 complex divition(complex x, complex y);
 complex inverse(complex x);
-void printComplex(complex x);
-
+void printComplex(FILE* stream, complex x);
 #endif

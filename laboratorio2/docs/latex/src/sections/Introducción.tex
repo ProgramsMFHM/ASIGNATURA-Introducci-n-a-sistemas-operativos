@@ -1,0 +1,12 @@
+\section{Introducción}
+Un proceso se define como un programa en ejecución dentro de un sistema operativo. Los procesos conforman la mayoría de las acciones que se realizan dentro de un sistema operativo, desde la las entradas y salidas del mismo, la creación o eliminación de archivos y carpetas, hasta la ejecución de programas más complejos.
+
+Sin embargo trabajar unicamente con procesos de manera independiente no siempre es lo mas optimo; es por esto que se ha desarrollado la manera de desempeñar procesos a traves de la \textbf{interconexión} entre estos.
+
+Existen multiples maneras en las que se puede lograr lo anterior, sin embargo la manera que se desarrollara y profundizara en el presente escrito sera mediante la \textbf{duplicación y creación de procesos}. Al duplicarse un proceso, este empieza un ``Árbol genealógico'' de procesos, este es llamado asi debido a que el proceso creador procede a conocerse como el proceso padre y el proceso creado como el proceso hijo, y en caso de que este ultimo llegara a crear otro proceso, el proceso padre pasara a ser el proceso abuelo y asi. Piense en esto como un árbol con ramificaciones donde cada nodo representa el proceso raíz o proceso padre de los que le proceden.
+
+Para lograr aprovechar estos procesos en la resolución de una tarea es importante mencionar las funciones de espera entre procesos padres e hijos, los cuales son demasiado influyentes, ya que como se apreciara mas adelante, harán la diferencia entre conseguir un resultado deseado o no.
+
+Por ultimo pero no menos importante, a la hora de trabajar con múltiples procesos se producen \textbf{cambios de contexto}, lo cuál quiere decir que el sistema operativo se encarga de cambiar la ejecución de un proceso por otro, lo que implica el almacenamiento del estado actual del proceso en procesamiento para poder continuar posteriormente. Este \textbf{cambio de contexto} representa una carga en los recursos del S.O que no es menor.
+
+Todo lo anterior de seguro genera multiples incógnitas a las que se buscará dar una respuesta en este informe.

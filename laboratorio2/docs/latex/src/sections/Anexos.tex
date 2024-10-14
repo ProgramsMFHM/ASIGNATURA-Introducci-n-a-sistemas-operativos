@@ -1,0 +1,147 @@
+\section{Anexos}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Hijo Padre Abuelo}, label={lst:arbol_gen}]{../../src/programa1.c}
+
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Uso de hijos en C Millton}, label={lst:uso_de_hijos_milton}]{../../src/programa2.c}
+
+\begin{lstlisting}[language=C, style=CodeStyle, caption={Uso de hijos en C por Ayrton}, label={lst:uso_de_hijos_ayrton}]
+/// @author Ayrton Morrison R.
+/// @brief Generacion de procesos Padre, hijo, nieto para operaciones aritmeticas.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <unistd.h>
+
+int main(int argc, char **argv){
+    if(argc != 4){
+        printf("Error, ingrese 3 numeros\n");
+        return 0;
+    }
+    float firstNumber = atof(argv[1]);
+    float secondNumber = atof(argv[2]);
+    float thirdNumber = atof(argv[3]);
+    if(!fork()){
+        // PROCESO HIJO (SEGUNDO PROCESO)
+        printf("Soy el proceso hijo y duplicare %.1f\n", firstNumber);
+        printf("El resultado es %.2f\n", firstNumber * 2);
+        if(!fork()){
+            // PROCESO NIETO (ULTIMO PROCESO)
+            printf("Soy el proceso nieto y sacare la raiz de %.1f\n", thirdNumber);
+            if(thirdNumber < 0){
+                printf("Error, no se puede sacar la raiz de un numero negativo\n");
+                return 0;
+            }
+            printf("El resultado es %.2f\n", sqrt(thirdNumber));
+        }
+    }
+    else{
+        // PROCESO PADRE (PRIMER PROCESO)
+        printf("Soy el proceso padre y elevare a la potencia de 3 %.1f\n", secondNumber);
+        printf("El resultado es %.2f\n", pow(secondNumber, 3));
+    }
+    return 0;
+}
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=C, style=CodeStyle, caption={Uso de hijos en C para una ecuacion cuadratica, por Ayrton}, label={lst:cuadratica_ayrton}]
+    /// @author Ayrton Morrison R.
+    /// @brief Generacion de procesos Padre e hijos para la resolucion de una ecuacion cuadratica.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <unistd.h>
+#include<sys/wait.h>
+#include<sys/types.h>
+
+typedef struct imaginary{
+    float real;
+    float imaginary;
+}imaginary;
+float getDiscriminant(float a, float b, float c);
+
+int main(int argc, char **argv){
+    if(argc > 4 || argc < 4){
+        printf("Error, ingrese 3 numeros en el formato 'a b c', siendo estos coeficientes de una ecuacion cuadratica \n");
+        return 0;
+    }
+    float a = atof(argv[1]);
+    float b = atof(argv[2]);
+    float c = atof(argv[3]);
+    float part_1 = 0.0, part_2 = 0.0, part_3 = 0.0;
+    pid_t pid1, pid2;
+    if(a == 0){
+        printf("Error, el coeficiente 'a' no puede ser 0\n");
+        return 0;
+    }
+    pid1 = fork();
+    if(!pid1){
+        //PROCESO HIJO(SEGUNDO PROCESO)
+        part_1 = 2 * a;
+        FILE *file = fopen("answers.txt", "w");
+        fprintf(file, "%.3f\n", part_1);
+        fclose(file);
+        pid2 = fork();
+        if(!pid2){
+            //PROCESO NIETO(ULTIMO PROCESO)
+            part_2 = -b;
+            FILE *file = fopen("answers.txt", "a");
+            fprintf(file, "%.3f", part_2);
+            fclose(file);
+            exit(0);
+        }
+        else{
+            wait(NULL);
+            exit(0);
+        }
+    }
+    else{
+        //PROCESO PADRE(PRIMER PROCESO)
+        part_3 = getDiscriminant(a, b, c);
+        wait(NULL);
+        wait(NULL);
+        FILE *file = fopen("answers.txt", "r");
+        fscanf(file, "%f\n", &part_1);
+        fscanf(file, "%f\n", &part_2);
+        fclose(file);
+        //2 RESPUESTAS DISTINTAS Y REALES
+        if (part_3 > 0){
+            float x1 = (part_2 + sqrt(part_3)) / part_1;
+            float x2 = (part_2 - sqrt(part_3)) / part_1;
+            printf("Las respuestas son %.3f y %.3f\n", x1, x2);
+        }
+        // 2 RESPUESTAS IGUALES Y REALES
+        else if(part_3 == 0){
+            float x = part_2 / part_1;
+            printf("La respuesta es %.3f\n", x);
+        }
+        // 2 RESPUESTAS DISTINTAS Y COMPLEJAS
+        else if(part_3 < 0){
+            imaginary x1, x2;
+            x1.real = part_2 / part_1;
+            x1.imaginary = sqrt(-part_3) / part_1;
+            x2.real = part_2 / part_1;
+            x2.imaginary = -sqrt(-part_3) / part_1;
+            printf("Las respuestas son %.3f + %.3fi y %.3f - %.3fi\n", x1.real, x1.imaginary, x2.real, x2.imaginary);
+        }
+    }
+}
+float getDiscriminant(float a, float b, float c){
+    return ( pow(b,2) - (4*a*c) );
+}
+\end{lstlisting}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={TAD para números complejos, por Milton}, label={lst:coplex.h}]{../../incs/complex.h}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Ecuación cuadrática en forma secuencial, por Milton}, label={lst:cuadratic1.c}]{../../src/cuadratic1.c}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Ecuación cuadrática en forma paralela, por Milton}, label={lst:cuadratic2.c}]{../../src/cuadratic2.c}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Ecuación cuadrática con un hijo por proceso, por Milton}, label={lst:cuadratic3.c}]{../../src/cuadratic3.c}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Ecuación cuadrática con memoria compartida, por Milton}, label={lst:cuadratic4.c}]{../../src/cuadratic4.c}
+
+\lstinputlisting[language=C, style=CodeStyle, caption={Generador de números en formato binario}, label={lst:generador.c}]{../../src/generador.c}

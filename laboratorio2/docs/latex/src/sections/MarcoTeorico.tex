@@ -1,0 +1,40 @@
+\section{Marco Teórico}
+DUrante la realización del presente informe de laboratorio se abordan diversos conceptos que es necesario tener claros a la hora de su comprensión.
+\subsection{Procesos}
+Como indicado anteriormente se le llama proceso a todo aquel programa que se encuentra en ejecución dentro de un sistema operativo.
+
+Los procesos tienen algunas caracteristicas que vale la pena mencionar:
+\begin{itemize}
+    \item \textbf{PID}: Identificador único del proceso.
+    \item \textbf{PPID}: Identificador único del proceso padre.
+    \item \textbf{Memoria del proceso}: La memoria que ocupa el proceso, es decir, la memoria que el proceso está usando (para almacenar variables, datos, etc.).
+    \item \textbf{Punteros a sus hijos}: Punteros a los procesos hijos del proceso actual.
+\end{itemize}
+Esta información se puede encontrar en el \textbf{Bloque de control del proceso} (PCB) que es una estructura de datos que contiene toda la información necesaria para el manejo de un proceso.
+
+\subsection{Jerarquía de procesos}
+Es posible familiarizar a los procesos de acuerdo con el nivel de creación que tienen entre ellos conservando las siguientes reglas:
+
+\begin{enumerate}
+    \item El proceso que crea a otro es el \textbf{padre} del creado.
+    \item El proceso creado es el \textbf{hijo} del proceso creador.
+    \item Es sólo necesario \textbf{un padre} para crear un \textbf{hijo}.
+    \item Cada hijo tiene \textbf{un solo padre} y un padre puede tener \textbf{varios hijos}.
+\end{enumerate}
+
+Conocer la jerarquía de los procesos permite comprender de mejor manera los próximos pasos a realizar, relacionados con la creación de un proceso por parte de otro proceso.
+
+\subsubsection{Árboles genealógicos}
+Si un proceso $A$ crea un proceso $B$ y a su vez el proceso $B$ crea a un proceso $C$, entonces tenemos las siguientes relaciones:
+\begin{itemize}
+    \item $A$ es el \textbf{padre} de $B$ y $B$ es el \textbf{padre} de $C$.
+    \item $B$ es el \textbf{hijo} de $A$ y $C$ es el \textbf{hijo} de $B$.
+    \item $A$ es el \textbf{abuelo} de $C$ y $C$ es el \textbf{nieto} de $A$.
+\end{itemize}
+
+\subsection{Duplicación de un proceso}
+dentro de un sistema operativo es posible duplicar un proceso, es decir, crear un proceso que sea el mismo que el original, pero con un identificador único (PID) diferente.
+
+Cuando un proceso es duplicado se genera un proceso Hijo de este, que tiene su información duplicada, es decir que comparte los nombres de las variables, los valores de las mismas, conoce la línea de ejecución que llevaba el padre y comienza su ejecución desde este mismo punto. Cabe entonces preguntarse ¿Compartirán estos procesos la memoria en el sistema? esta será una de las preguntas que serán analizadas posteriormente.
+
+Este comportamiento puede ser útil a la hora de crear un programa puesto que al existir dos procesos en el sistema operativo el procesador los atenderá de forma ``pseudoparalela'' (como si fueran procesos diferentes) logrando aumentar la eficiencia de la CPU y trabajando en más operaciones al mismo tiempo, lo que puede aumentar el rendimiento de un proceso.

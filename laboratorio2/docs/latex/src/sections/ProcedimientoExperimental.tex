@@ -1,0 +1,22 @@
+\section{Procedimiento experimental}
+Para el presente laboratorio fueron planteadas por el profesor de asignatura las siguientes tareas:
+\begin{enumerate}
+    \item Realizar un programa \textit{hijo\_padre\_abuelo} que muestre a través de sus ID la creación de ellos
+    \item Ingresar por paso de parámetros tres valores enteros, indicar al padre que duplique el primer valor, al abuelo que eleve  a la potencia $3$ el segundo valor y que el hijo obtenga la raíz del tercer valor
+    \item Dado un conjunto de valores del tipo ${a,b,c}$ obtener las raíces de una ecuación cuadrática cuyos factores son a,b,c. Resolver usando `fork()'
+\end{enumerate}
+
+Para la realización de las anteriores programas se hace uso del lenguaje \verb|C| que con librerías como \verb|sys/types.h| y \verb|unistd.h| se puede interactuar con el sistema operativo. En particular nos dan acceso a las siguientes herramientas:
+\begin{enumerate}
+    \item \verb|fork()| que permite duplicar un proceso.
+    Esta función luego de generar el proceso hijo tiene un retorno para ambos procesos, el padre recibe por retorno el PID del hijo y el hijo recibe $0$ como retorno. Esto permite manejar la lógica para ambos procesos dentro del mismo código.
+    \item \verb|pid_t| es el tipo de dato que representa el PID de un proceso.
+    \item \verb|getpid()| que permite obtener el PID del proceso actual.
+    \item \verb|getppid()| que permite obtener el PID del proceso padre.
+    \item \verb|wait()| que permite esperar a que un proceso hijo termine su ejecución.
+    Se puede pasar como parámetro el PID del proceso hijo a esperar, pero si se pasa \verb|NULL| se esperará hasta que cualquiera de los procesos hijos termine su ejecución.
+    \item \verb|exec()| que permite ejecutar un programa en el sistema operativo.
+    Esta función aunque no fué usada en la presente práctica es llamativa de mencionar puesto que permite convertir un proceso en otro, pudiendo reverenciarlo por su PID; Esta función es una manera más adecuada de ejecutar funciones de sistema en contraposición con \verb|system()| de la librería \verb|stdlib.h| puesto que, de acuerdo con \textcite{tanenbaum1997sistemas} puede conllevar a ciertos problemas de seguridad.
+\end{enumerate}
+
+Con todas las herramientas anteriores se puede proceder a realizar las tareas que se plantean en el presente laboratorio.

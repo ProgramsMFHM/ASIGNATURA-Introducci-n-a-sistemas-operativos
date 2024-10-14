@@ -1,0 +1,12 @@
+\section{Análisis y discusión de los resultados}
+A partir de todas las pruebas realizadas anteriormente se pueden sacar en claro algunas características de la duplicación de procesos y su comportamiento.
+
+Lo que resalta a simple vista de los resultados obtenidos es el hecho que los programas creados mediante el uso de \verb|fork()| tuvieron considerablemente menos eficiencia que el programa secuencial (siendo la más destacable aquella versión que crea un proceso por cada una de las ecuaciones presentes en el archivo de recursos).
+
+La razón de lo anterior es bien predecible, resulta ser que la creación de procesos duplicados mediante \verb|fork()| requiere una importante carga para el sistema operativo, puesto que implica un cambio de contexto, la creación de un PCB, la duplicación de memoria entre otros pasos importantes, lo que en el caso de los programas secuenciales no es necesario, por lo que es más eficiente.
+
+En el caso del programa mostrado en los anexos~\ref{lst:cuadratica_ayrton} y~\ref{lst:cuadratic2.c} su ineficacia, además de deberse al uso de múltiples \verb|fork()| para cada ecuación, se debe a que el programa genera muchas aperturas y comprobaciones de archivos, lo cual es un proceso costoso en cuanto a tiempo de ejecución.
+
+Por otro lado, la razón de la mejor funcionalidad del programa que genera un hijo por proceso se debe al poder del ``paralelismo'', que permite que las $n$ ecuaciones ingresadas sean trabajadas ``simultáneamente'' generando un tiempo de respuesta un poco más rápido que otras implementaciones.
+
+Otro análisis destacable es el hecho de que los procesos duplicados mediante \verb|fork()| no comparten memoria entre sí; para lograr conseguir este comportamiento es necesario utilizar la memoria compartida, lo cual es un problema que se aborda en el anexo~\ref{lst:cuadratic4.c}. Sin embargo, este programa utiliza contenidos que exceden los propósitos del presente laboratorio. Empero a pesar dle uso de memoria compartida, el programa resulta ser ineficiente, esto debido a que se crean trs \verb|fork()| para cada ecuación, lo cual, como se menciono anteriormente es tremendamente ineficiente.
