@@ -1,0 +1,72 @@
+\section{Datos obtenidos}
+Lo primero que se llevó a cabo fue la creación de un programa que genere un proceso productor (que puede encnotrar en el anexo\ref{lst:send.c}) y un consumidor (que puede encnotrar en el anexo\ref{lst:recieve.c}) que se encargaran de enviar mensajes a una cola de mensajes, y recibirlos.
+
+Para ello se usó inicialmente la \texttt{key} $12345$ para la cola de mensajes. Ya con la cola iniciada el proceso productor entraba en un bucle infinito que genera mensajes con un retardo dado por la función \texttt{delay()}, el mensaje es creado de manera secuencial y va acompañado del \textbf{identificador del proceso} que lo envió, para ello se utiliza la función \texttt{getpid()} vista en informes anteriores. El proceso generará inicialmente $14$ mensajes, y el $15$-ésimo será el mensaje ``Terminado'', que finalizará el programa (evidentemente se puede cambiar el numero de mensajes que se envían, pero para el análisis se optó por este valor).
+
+El proceso consumidor similarmente funciona mediante un bucle infinito que recibe mensajes y los imprime por pantalla; cuando lee el mensaje ``Terminado'' lo imprime y finaliza el programa \textbf{Borrando la cola de mensajes} mediante la función \texttt{msgctl()} con la operación \texttt{IPC\_RMID}.
+
+Se realizaron entonces $4$ experimentos diferentes para analizar el comportamiento del sistema operativo frente a la Transferencia de mensajes:
+
+\subsection{Un productor y un consumidor}
+Inicialmente se probó generar $15$ mensajes entre un productor y un consumidor.
+
+\begin{lstlisting}[language=bash, style=CodeStyle, caption=Un consumidor y un productor, label=lst:1consumidor1producidor]
+$ ./send.out& ./recieve.out&
+34619 enviado: Mensaje 34619-1
+34620 recibido: Mensaje 34619-1
+34620 recibido: Mensaje 34619-2
+34619 enviado: Mensaje 34619-2
+34619 enviado: Mensaje 34619-3
+34619 enviado: Mensaje 34619-4
+34619 enviado: Mensaje 34619-5
+34619 enviado: Mensaje 34619-6
+34619 enviado: Mensaje 34619-7
+34619 enviado: Mensaje 34619-8
+34619 enviado: Mensaje 34619-9
+34619 enviado: Mensaje 34619-10
+34619 enviado: Mensaje 34619-11
+34619 enviado: Mensaje 34619-12
+34619 enviado: Mensaje 34619-13
+34619 enviado: Mensaje 34619-14
+34620 recibido: Mensaje 34619-3
+34619 enviado: Terminado
+34620 recibido: Mensaje 34619-4
+34620 recibido: Mensaje 34619-5
+34620 recibido: Mensaje 34619-6
+34620 recibido: Mensaje 34619-7
+34620 recibido: Mensaje 34619-8
+34620 recibido: Mensaje 34619-9
+34620 recibido: Mensaje 34619-10
+34620 recibido: Mensaje 34619-11
+34620 recibido: Mensaje 34619-12
+34620 recibido: Mensaje 34619-13
+34620 recibido: Mensaje 34619-14
+34620 recibido: Terminado, se termina el programa
+
+[1]-  Done                    ./send.out
+[2]+  Done                    ./recieve.out
+\end{lstlisting}
+
+Al hacer este experimento con el \texttt{delay()} activado se veía un patrón de envío y recibido perfecto, sin embargo al eliminar el \texttt{delay()} se pudo observar el comportamiento retratado en el anexo \ref{lst:1consumidor1producidor} donde se aprecia que en ocasiones Se recibe el mensaje antes de enviarlo o el consumidor termina su ejecución mucho después de que el productor.
+
+El por qué de estos comportamientos será analizado en profundidad más adelante.
+
+\subsection{Tres productores y un consumidor}
+Para este experimento se probó con tres productores (cada uno de ellos generando $15$ mensajes) y un consumidor, esto manteniendo el \texttt{delay()} activado. Los resultados del experimento se consignan en el anexo \ref{lst:3producidores1consumidor}.
+
+Lo que se pudo observar en este experimento fue que el consumidor pudo recibir los mensajes de sus trs productores, deteniéndose cuando uno de ellos envió el mensaje \texttt{Terminado}, momento en el cuál aparecen dos errores \texttt{Error al enviar el mensaje: Invalid argument} provocados porque los otros productores no encuentran la cola de mensajes, momento en el cuál termina su ejecución con un error que podemos ver al final de la ejecución del experimento.
+\subsection{Tres consumidores para un productor único}
+En este caso se mantuvo el \texttt{delay()} pero de eliminó la salida por pantalla del productor, obteniendo por resultado la salida mostrada en el anexo \ref{lst:3consumidores1producidor}.
+
+Podemos notar de este resultado un par de asuntos llamativos:
+\begin{itemize}
+    \item Aparece un error en dos de los consumidores luego de que el primero reciba un mensaje de \texttt{terminado} el cuál indica que la cola de mensajes ha sido eliminada, por lo que no se puede leer ningún mensaje.
+    \item Las impresiones por pantalla sugieren que los procesos consumidores `se repartieron en orden' los mensajes de la cola de mensajes ya que se repite el patrón $9550$, $9551$, $9552$ en los PIDs de los consumidores.
+\end{itemize}
+
+\subsection{Diez productores y un consumidor}
+Para este experimento se probó con diez productores (cada uno de ellos generando $15$ mensajes) y un consumidor, esto manteniendo el \texttt{delay()} activado. Los resultados del experimento se consignan en el anexo \ref{lst:10producidor1producidor}.
+
+Podemos notar los mismos comportamientos analizados en los casoa anteriores: tenemos, como era de esperar $9$ menasjes de error por parte de los productores que no encuentran acceso a la cola de mensajes.
+
+Cabe destacar que la cola de mensajes fué procesada sin mayor inconveniente por el proceso consumidor.

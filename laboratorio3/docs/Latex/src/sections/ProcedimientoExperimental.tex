@@ -1,0 +1,17 @@
+\section{Procedimiento experimental}\label{sec:ProcedimientoExperimental}
+Una vez comprendidos los conceptos teóricos y prácticos necesarios para trabajar con la Transferencia de mensajes, se pueden empezar a realizar algunos experimentos para una mejor comprensión del comportamiento del sistema operativo frente a este método de comunicación.
+
+El Procedimiento experimental que se realizará a continuación consiste en:
+\begin{enumerate}
+    \item Inicialmente crear un proceso que se encargue de generar mensajes de manera constante (con tiempos de espera \textit{aleatorios} entre mensajes) y enviarlos a una cola de mensajes.
+    \item Construir otro proceso que se encargue de recibir mensajes de la cola de mensajes y imprimirlos en pantalla.
+    \item Realizar esto con una cantidad de mensajes considerable y analizar los resultados.
+\end{enumerate}
+
+Además se buscará dar respuesta a las siguientes preguntas:
+\begin{itemize}
+    \item ¿Qué ocurre cuando se envían mensajes a una cola de mensajes que ya está creada?
+    \item ¿Cómo es el comportamiento de una cola cuando se tienen varios procesos que la usan? (productores y consumidores en diferentes cantidades).
+    \item ¿Cómo enviar a más de un proceso consumidor el mismo mensaje?
+    \item ¿De qué manera se podría recibir en un solo Proceso Consumidor los mensajes de más de un Proceso Productor?
+\end{itemize}

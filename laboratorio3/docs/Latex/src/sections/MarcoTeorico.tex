@@ -1,0 +1,57 @@
+\section{Marco teórico}\label{sec:MarcoTeorico}
+Para comprender los procedimientos realizados en el presente laboratorio es necesario comprender conceptos teóricos y prácticos previos.
+\subsection{Cola de mensajes}
+Una cola de mensajes es una estructura de datos que almacena un conjunto de mensajes. Cada cola presente en un sistema operativo (Linux para el presente informe) tiene un identificador único, que se utiliza para acceder a la cola, así como diferentes permisos para el usuario que la creó, el grupo al que pertenece y demás usuarios.
+
+En Linux es posible ver las colas que se encuentran activas con el comando \texttt{ipcs} y eliminar una cola con el comando \texttt{ipcrm -q <id>}.
+\begin{lstlisting}[language=bash, style=CodeStyle, caption=colas de mensajes, label=lst:colas]
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages
+0x00003039 30         milton     666        0            0
+
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status
+
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems
+\end{lstlisting}
+
+\subsection{Uso de las bibliotecas \texttt{sys/ipc.h} y \texttt{sys/msg.h}}
+Las bibliotecas \texttt{sys/ipc.h} y \texttt{sys/msg.h} contienen las funciones necesarias para crear y manipular colas de mensajes, enviar y recibir mensajes.
+
+Todo parte con una \texttt{key}, una especie de código que representa a una cola dentro de un sistema operativo (diferente al \texttt{ID} que explicaremos después). Como usuarios podemos definir una key como un numero cualquiera, por ejemplo $12345$, pero es recomendable que la key sea un número único para cada cola de mensajes, lo que puede lograrse mediante la función \texttt{ftok()} la cuál ``\textit{Genera una clave de comunicación de interproceso estándar}''\parencite{ftok} en base a un archivo y un identificador, con lo que podríamos escribir algo como: \texttt{key\_t  key = ftok("main.c", 1);} para obtener una llave válida.
+
+Además de la llave se necesita un espacio donde guardar el mensaje, para lo que se suele usar una estructura \texttt{struct message} que contiene un tipo y un cuerpo del mensaje.
+\begin{lstlisting}[language=C, style=CodeStyle]
+#define MAX_MSG_SIZE 100
+typedef struct message {
+    long type;
+    char body[MAX_MSG_SIZE];
+} Message;
+\end{lstlisting}
+El tipo del mensaje es un \texttt{long} que puede ser cualquier número; mediante este tipo de mensaje podríamos decidir que un receptor de mensajes solamente reciba mensajes del tipo $1$, por ejemplo.
+
+Por otro lado en el ejemplo el cuerpo del mensaje es un arreglo de caracteres, sin embargo la estructura del mensaje podría contener cualquier tipo de información, por ejemplo un \texttt{int} o un \texttt{char} o un puntero a una estructura. Sin embargo, es importante recordar que la cola de mensajes no almacena punteros a memoria del proceso (por ejemplo, un puntero a una estructura dinámica), ya que los datos deben ser autocontenidos y no depender de direcciones de memoria específicas del proceso emisor.
+
+Teniendo esta llave, podemos crear una cola de mensajes con la función \texttt{msgget()} que devuelve un identificador de cola de mensajes, si la cola no existe se creará una nueva, si ya existe se devolverá el identificador de la cola existente. una manera de crear esta cola sería: \texttt{int msg\_id = msgget(key, 0666 | IPC\_CREAT);}\footnote{El números \texttt{0666} corresponde a los permisos de la cola (ver referencia: \citetitle{permisosLinux}), en este caso se permite a cualquier usuario leer y escribir en la cola, mientras que \texttt{IPC\_CREAT} indica que la cola debe ser creada si no existe.}, este proceso se hará en todos los procesos usando siempre la mima llave para que cada proceso se conecte a la misma cola.
+
+Una vez teniendo la conexión establecida con la cola un proceso puede enviar un mensaje a otro proceso mediante la función \texttt{msgsnd()} que recibe como parámetros:\begin{itemize}
+    \item El identificador de la cola de mensajes.
+    \item Un puntero a un \texttt{struct message} que contiene el mensaje a enviar.
+    \item El tamaño del mensaje (solamente el cuerpo, sin contar el tamaño del tipo).
+    \item Una bandera que puede variar el comportamiento del envío del mensaje.
+\end{itemize}
+
+El mensaje se envía a través de la cola de mensajes, y el receptor puede recibirlo mediante la función \texttt{msgrcv()} que recibe como parámetros:\begin{itemize}
+    \item El identificador de la cola de mensajes.
+    \item Un puntero a un \texttt{struct message} que contiene el mensaje recibido.
+    \item El tamaño del mensaje (solamente el cuerpo, sin contar el tamaño del tipo).
+    \item EL tipo de proceso que se recibirá ($0$ para cualquier tipo).
+    \item Una bandera que puede variar el comportamiento del receptor del mensaje.
+\end{itemize}
+
+Finalmente, luego de haber realizado las operaciones necesarias es menester eliminar la cola de mensajes, puesto que esta es independiente de los procesos que la usan, por lo que de no eliminarla quedará presente aún habiendo terminado los procesos; para su eliminación usamos la función \texttt{msgctl()} que recibe como parámetros:\begin{itemize}
+    \item El identificador de la cola de mensajes.
+    \item Un identificador con la operación que se desea realizar sobre la cola (\texttt{IPC\_RMID} para eliminar la cola).
+    \item Un puntero a una estructura \texttt{msqid\_ds}. Esta estructura almacena información sobre la cola de mensajes, como permisos, tiempo de última modificación, número de mensajes en la cola, y límites de tamaño de los mensajes, entre otros.
+\end{itemize}

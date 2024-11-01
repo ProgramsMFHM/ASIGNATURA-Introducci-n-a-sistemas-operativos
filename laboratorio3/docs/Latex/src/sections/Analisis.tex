@@ -1,0 +1,104 @@
+\section{Análisis y discusión de los resultados}
+Una vez realizados los experimentos podemos realizar el siguiente análisis y discusión de los resultados obtenidos:
+
+\subsection{El paralelismo entre procesos}
+Se puede apreciar que los procesos productores y consumidores son atendidos por el sistema operativo ``al mismo tiempo'' lo cuál provoca que sea posible que un proceso productor envíe un mensaje a la cola de mensajes y antes de que este pueda ser impreso por el productor el consumidor lo reciba y procese. Esto genera la ilusión de que `El mensaje fue recibido antes de ser enviado', pero es causa unicamente del comportamiento del sistema operativo que hemos analizado en informes anteriores.
+\subsection{Límites de la cola de mensajes}
+Respecto a los límites de la cola y el comportamiento de los programas se encontró que, de acuerdo con \textcite{colasLinux} existen dos archivos donde se almacena la información del límite de mensajes de una cola y el límite de tamaño de la misma, estos son: `/proc/sys/fs/mqueue/msg\_max' y `/proc/sys/fs/mqueue/msgsize\_max'. (En mi sistema operativo las colas tienen un límite de $10$ mensajes y un tamaño de $8192$ bytes).
+
+Entonces ¿Cómo se manejan los mensajes cuando estos límites se alcanzan?
+
+Pues esta es una de las facilidades que nos entrega la función \texttt{msgsnd()} es la de bloquear el proceso hasta que la cola tenga un espacio disponible; este es el comportamiento por defecto, pero también se puede cambiar mediante la bandera \texttt{IPC\_NOWAIT} que indica que no se debe bloquear el proceso, en su lugar la función devolverá $-1$ indicando que el mensaje no pudo ser enviado; además de esto alterará el valor de \texttt{errno} a \texttt{EAGAIN} indicando que el el recurso está temportalmente no disponible: ``\textit{Resource temporarily unavailable}''.
+
+De acuerdo con \textcite{msgsndYErno}: En caso de no activar la bandera \texttt{IPC\_NOWAIT} la función \texttt{msgsnd()} bloqueará el proceso hasta que se cumpla una de las siguientes condiciones:
+\begin{itemize}
+    \item La condición responsable de la suspensión ya no existe, en cuyo caso se envía el mensaje.
+    \item El parámetro \texttt{MessageQueueID} se elimina del sistema. Cuando esto ocurre, la variable global de \texttt{errno} se establece igual al código de error de \texttt{EIDRM} y se devuelve un valor de $-1$.
+    \item El proceso de llamada recibe una señal que se va a atrapar. En este caso, el mensaje no se envía y el proceso de llamada reanuda la ejecución en la forma prescrita en la subrutina sigaction.
+\end{itemize}
+
+Sin embargo \texttt{msgrcv()} también tiene ciertas consideraciones a la hora de tratar con las colas, en particular cuando la cola está vacía. Por defecto si se con \texttt{msgrcv()} a una cola vacía el proceso se bloqueará hasta que se reviba un mensaje, pero también se puede cambiar mediante la bandera \texttt{IPC\_NOWAIT} que indica que no se debe bloquear el proceso, en su lugar la función devolverá $-1$ indicando que el mensaje no pudo ser recibido; además de esto alterará el valor de \texttt{errno} a \texttt{ENOMSG} indicando que no hay mensajes (o no del tipo deseado) en la cola: ``\textit{Error NO MeSaGe}''.
+
+De acuerdo con \textcite{msgrcvYErno}: En caso de no activar la bandera \texttt{IPC\_NOWAIT} la función \texttt{msgrcv()} bloqueará el proceso hasta que se cumpla una de las siguientes condiciones:
+\begin{itemize}
+    \item Se coloca un mensaje del tipo deseado en la cola.
+    \item El identificador de cola de mensajes especificado por el parámetro \texttt{MessageQueueID} se elimina del sistema. Cuando esto ocurre, la \texttt{errno} se establece en el código de error \texttt{EIDRM} y se devuelve un valor de $-1$.
+    \item El proceso de llamada recibe una señal que se va a capturar. En este caso, no se recibe un mensaje y el proceso de llamada se reanuda de la forma descrita en la ``subrutina sigaction''.
+\end{itemize}
+
+
+
+\subsubsection*{La variable \texttt{errno}}
+\texttt{erno} es una variable global presente en la librería estándar de \texttt{C} que contiene el código del último error que ocurrió en la ejecución de un programa. Esta variable está definida dentro de la cabecera \texttt{errno.h} que define esta como un valor entero que diferentes funciones pueden alterar.
+
+Es posible conocer todos los posibles valores de \texttt{errno} mediante el comando \texttt{errno -l} que se encuentra dentro del paquete \texttt{moreutils} de \texttt{GNU/Linux}.
+
+\begin{lstlisting}[language=bash, style=CodeStyle]
+$errno -l
+EPERM 1 Operation not permitted
+ENOENT 2 No such file or directory
+ESRCH 3 No such process
+EINTR 4 Interrupted system call
+EIO 5 Input/output error
+ENXIO 6 No such device or address
+E2BIG 7 Argument list too long
+ENOEXEC 8 Exec format error
+EBADF 9 Bad file descriptor
+ECHILD 10 No child processes
+EAGAIN 11 Resource temporarily unavailable
+ENOMEM 12 Cannot allocate memory
+EACCES 13 Permission denied
+...
+\end{lstlisting}
+
+Incluso es posible consultar el valor de \texttt{errno} mediante la función \texttt{strerror()} que recibe como parámetro el código de error y devuelve una cadena con el mensaje correspondiente, así podríamos usar esta función para obtener un mensaje de error de forma más clara.
+\begin{lstlisting}[language=C, style=CodeStyle, caption={Ejemplo de uso de errno y strerror}, label=lst:errno]
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+int main() {
+    FILE *file;
+
+    // Intentar abrir un archivo que no existe
+    file = fopen("archivo_inexistente.txt", "r");
+
+    // Comprobar si fopen fallo
+    if (file == NULL) {
+        // Imprimir un mensaje de error especifico
+        printf("Error al abrir el archivo: %s\n", strerror(errno));
+    } else {
+        // Si fopen fue exitoso, realizar operaciones con el archivo
+        printf("Archivo abierto correctamente.\n");
+        // Cerrar el archivo al finalizar
+        fclose(file);
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection*{¿Cómo afectan estos limites a los experimentos realizados?}
+En los experimentos realizados no se nota el efecto de los límites de lad colas de mensajes puesto que no se usó la bandera \texttt{IPC\_NOWAIT}, por lo que los procesos se bloqueaban y desbloqueaban según correspondía.
+
+\subsection{Resolviendo preguntas planteadas}
+Como mencionado en la sección \ref{sec:ProcedimientoExperimental} es menester responder a algunas preguntas relacionadas con la Transferencia de mensajes:
+\begin{itemize}
+    \item \textbf{¿Qué ocurre cuando se envían mensajes a una cola de mensajes que ya está creada?}: Ahora sabemos que lo que pasará será que simplemente será utilizada, y en caso de que no se encuentre la cola será creada al usar la función \texttt{msgget()}. Sin embaego si se intenta enviar o recibir información a través de una cola que no está creada, se producirá un error que será detectado por las funciones \texttt{msgsnd()} y \texttt{msgrcv()}.
+    \item \textbf{¿Cómo es el comportamiento de una cola cuando se tienen varios procesos que la usan? (productores y consumidores en diferentes cantidades)}: La cola almacenará los mensajes en el orden en que lleguen y cuando la cola alcance su tamaño máximo los procesos que intenten enviar mensajes a ella se bloquearán o enviarán un error según corresponda. Similarmente si hay procesos en busca de leer una cola que se encuentra vacía también se bloquearán o se enviará un error.
+    \item \textbf{¿Cómo enviar a más de un proceso consumidor el mismo mensaje?}: A pesar de que no se hizo un experimento al respecto es sencillo intuir que se pueden crear dos colas (con keys diferentes) y enviar un determinado mensaje a una y posteriormente a otra, luego cada proceso productor leerá una determinada cola de procesos y leerá el mensaje que le corresponda.
+    Otra alternativa podría ser usar una única cola con la presencia de mensajes de dos tipos diferentes, luego desde un proceso consumidor leer solo los mensajes de tipo $A$ y desde el otro los mensajes de tipo $B$.
+    \item \textbf{¿De qué manera se podría recibir en un solo Proceso Consumidor los mensajes de más de un Proceso Productor?}: Este ejemplo sí se realizó en uno de los experimentos; lo que se debe hacer es que los procesos productores envíen los mensajes a una cola que será leída por el proceso consumidor.
+\end{itemize}
+
+
+Luego de haber respondido estas preguntas podemos darnos cuenta de la versatilidad que nos permiten las colas de mensajes: Estas son independientes de los procesos que las usan, por lo que podemos tener una cola donde llegan mensajes de $m$ productores que son leídos por $n$ consumidores y nuestro programa podrá funcionar de manera adecuada. Además podemos enviar datos de diversos tipos (a pesar de que los ejemplos fueron solo con cadenas de texto), lo cuál puede ser realmente útil en situaciones reales.
+
+\subsection{Desventajas de la Transferencia de mensajes}
+El método de \textbf{Transferencia de mensajes} analizado en el presente informe es muy versátil, pero tiene algunas desventajas que deben ser consideradas a la hora de trabajar con él:
+\begin{itemize}
+    \item \textbf{Limitaciones de espaico y cantidad}: Como se analizó anteriormentem las colas de mensajes tienen un límite de mensajes y tamaño de los mensajes, que, a pesar de que puede ser controlado mediante bloqueos de los procesos pueden evitar una comunicación rápida y eficiente.
+    \item \textbf{Eficiencia}: El método de Transferencia de mensajes no es eficiente en comparación con otros métodos de comunicación, puesto que para enviar un mensaje a una cola es necesario copiar su información en la misma lo que puede ser muy costoso en comparación con otros métodos de comunicación.
+\end{itemize}
+
+Para superar este tipo de dificultades se puede utilizar otros métodos de comunicación, como por ejemplo los \textit{Semáforos} o los \textit{Monitores} los cuales permiten manejar información mediante \textbf{memoria compartida} y \textbf{sincronización} de la misma, pero que serán posiblemente analizados en futuras experiencias de laboratorio.

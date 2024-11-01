@@ -1,0 +1,7 @@
+\section{Conclusiones y recomendaciones}
+Finalmente a raíz de lo realizado en este experimento se puede concluir lo siguiente:
+\begin{enumerate}
+  \item Existen diferentes métodos de comunicación entre procesos, cada uno de los cuales trae sus propias ventajas y desventajas; entre ellos se encuentra el método de \textbf{Transferencia de mensajes}, que permite a varios procesos leer y escribir en una cola de mensajes facilitando el procesamiento de información por parte de varios productores y consumidores.
+  \item El lenguaje de programación \texttt{C} trae incorporadas diferentes librerías y funciones que facilitan el manejo de colas de mensajes, permitiendo a los programadores realizar operaciones de comunicación entre procesos de manera sencilla mediante el uso de llamadas al sistema como \texttt{SEND} y \texttt{RECEIVE} a través de las funciones \texttt{msgsnd()} y \texttt{msgrcv()}.
+  \item Como dato adicional encontrado gracias a este laboratorio se destaca la existencia de la variable \texttt{errno} que contiene el código del último error que ocurrió en la ejecución de un programa, lo que permite el fácil reconocimiento de los errores ocurridos mediante las diferentes llamadas al sistema.
+\end{enumerate}

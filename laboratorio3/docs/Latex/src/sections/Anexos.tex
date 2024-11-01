@@ -1,0 +1,269 @@
+\section{Anexos}
+
+\lstinputlisting[language=C, style=CodeStyle, caption=send.c, label=lst:send.c]{../../src/send.c}
+\lstinputlisting[language=C, style=CodeStyle, caption=recieve.c, label=lst:recieve.c]{../../src/recieve.c}
+
+\begin{lstlisting}[language=bash, style=CodeStyle, caption=Tres productores y un consumidor, label=lst:3producidores1consumidor]
+$ ./send.out& ./send.out& ./send.out& ./recieve.out&
+[1] 36254
+[2] 36255
+[3] 36256
+[4] 36257
+36257 recibido: Mensaje 36255-1
+36255 enviado: Mensaje 36255-1
+36254 enviado: Mensaje 36254-1
+36257 recibido: Mensaje 36254-1
+36256 enviado: Mensaje 36256-1
+36257 recibido: Mensaje 36256-1
+36255 enviado: Mensaje 36255-2
+36257 recibido: Mensaje 36255-2
+36254 enviado: Mensaje 36254-2
+36257 recibido: Mensaje 36254-2
+36256 enviado: Mensaje 36256-2
+36257 recibido: Mensaje 36256-2
+36255 enviado: Mensaje 36255-3
+36257 recibido: Mensaje 36255-3
+36254 enviado: Mensaje 36254-3
+36257 recibido: Mensaje 36254-3
+36256 enviado: Mensaje 36256-3
+36257 recibido: Mensaje 36256-3
+36254 enviado: Mensaje 36254-4
+36257 recibido: Mensaje 36254-4
+36256 enviado: Mensaje 36256-4
+36257 recibido: Mensaje 36256-4
+36255 enviado: Mensaje 36255-4
+36257 recibido: Mensaje 36255-4
+36254 enviado: Mensaje 36254-5
+36257 recibido: Mensaje 36254-5
+36254 enviado: Mensaje 36254-6
+36257 recibido: Mensaje 36254-6
+36255 enviado: Mensaje 36255-5
+36257 recibido: Mensaje 36255-5
+36256 enviado: Mensaje 36256-5
+36257 recibido: Mensaje 36256-5
+36254 enviado: Mensaje 36254-7
+36257 recibido: Mensaje 36254-7
+36254 enviado: Mensaje 36254-8
+36257 recibido: Mensaje 36254-8
+36255 enviado: Mensaje 36255-6
+36257 recibido: Mensaje 36255-6
+36255 enviado: Mensaje 36255-7
+36257 recibido: Mensaje 36255-7
+36256 enviado: Mensaje 36256-6
+36257 recibido: Mensaje 36256-6
+36254 enviado: Mensaje 36254-9
+36257 recibido: Mensaje 36254-9
+36256 enviado: Mensaje 36256-7
+36257 recibido: Mensaje 36256-7
+36257 recibido: Mensaje 36255-8
+36255 enviado: Mensaje 36255-8
+36255 enviado: Mensaje 36255-9
+36257 recibido: Mensaje 36255-9
+36257 recibido: Mensaje 36254-10
+36254 enviado: Mensaje 36254-10
+36255 enviado: Mensaje 36255-10
+36257 recibido: Mensaje 36255-10
+36254 enviado: Mensaje 36254-11
+36257 recibido: Mensaje 36254-11
+36257 recibido: Mensaje 36256-8
+36256 enviado: Mensaje 36256-8
+36254 enviado: Mensaje 36254-12
+36257 recibido: Mensaje 36254-12
+36254 enviado: Mensaje 36254-13
+36257 recibido: Mensaje 36254-13
+36256 enviado: Mensaje 36256-9
+36257 recibido: Mensaje 36256-9
+36257 recibido: Mensaje 36255-11
+36255 enviado: Mensaje 36255-11
+36254 enviado: Mensaje 36254-14
+36257 recibido: Mensaje 36254-14
+36256 enviado: Mensaje 36256-10
+36257 recibido: Mensaje 36256-10
+36256 enviado: Mensaje 36256-11
+36257 recibido: Mensaje 36256-11
+36255 enviado: Mensaje 36255-12
+36257 recibido: Mensaje 36255-12
+36254 enviado: Terminado
+36257 recibido: Terminado, se termina el programa
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+
+[1]   Done                    ./send.out
+[2]   Exit 1                  ./send.out
+[3]-  Exit 1                  ./send.out
+[4]+  Done                    ./recieve.out
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, style=CodeStyle, caption=Tres consumidores para un productor único, label=lst:3consumidores1producidor]
+9550 recibido: Mensaje 9549-1
+9551 recibido: Mensaje 9549-2
+9552 recibido: Mensaje 9549-3
+9550 recibido: Mensaje 9549-4
+9551 recibido: Mensaje 9549-5
+9552 recibido: Mensaje 9549-6
+9550 recibido: Mensaje 9549-7
+9551 recibido: Mensaje 9549-8
+9552 recibido: Mensaje 9549-9
+9550 recibido: Mensaje 9549-10
+9551 recibido: Mensaje 9549-11
+9552 recibido: Mensaje 9549-12
+9550 recibido: Mensaje 9549-13
+9551 recibido: Mensaje 9549-14
+9552 recibido: Terminado, se termina el programa
+Error al recibir el mensaje: Identifier removed
+Error al recibir el mensaje: Identifier removed
+
+[2]   Done                    ./send.out
+[3]   Exit 1                  ./recieve.out
+[4]   Exit 1                  ./recieve.out
+[5]-  Done                    ./recieve.out
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, style=CodeStyle, caption=diez productores y un consumidor, label=lst:10producidor1producidor]
+10317 recibido: Mensaje 10314-1
+10317 recibido: Mensaje 10312-1
+10317 recibido: Mensaje 10316-1
+10317 recibido: Mensaje 10311-1
+10317 recibido: Mensaje 10309-1
+10317 recibido: Mensaje 10314-2
+10317 recibido: Mensaje 10313-1
+10317 recibido: Mensaje 10307-1
+10317 recibido: Mensaje 10312-2
+10317 recibido: Mensaje 10308-1
+10317 recibido: Mensaje 10315-1
+10317 recibido: Mensaje 10313-2
+10317 recibido: Mensaje 10309-2
+10317 recibido: Mensaje 10312-3
+10317 recibido: Mensaje 10310-1
+10317 recibido: Mensaje 10311-2
+10317 recibido: Mensaje 10316-2
+10317 recibido: Mensaje 10314-3
+10317 recibido: Mensaje 10312-4
+10317 recibido: Mensaje 10309-3
+10317 recibido: Mensaje 10308-2
+10317 recibido: Mensaje 10312-5
+10317 recibido: Mensaje 10310-2
+10317 recibido: Mensaje 10307-2
+10317 recibido: Mensaje 10315-2
+10317 recibido: Mensaje 10311-3
+10317 recibido: Mensaje 10313-3
+10317 recibido: Mensaje 10313-4
+10317 recibido: Mensaje 10316-3
+10317 recibido: Mensaje 10310-3
+10317 recibido: Mensaje 10312-6
+10317 recibido: Mensaje 10308-3
+10317 recibido: Mensaje 10314-4
+10317 recibido: Mensaje 10309-4
+10317 recibido: Mensaje 10307-3
+10317 recibido: Mensaje 10315-3
+10317 recibido: Mensaje 10311-4
+10317 recibido: Mensaje 10307-4
+10317 recibido: Mensaje 10312-7
+10317 recibido: Mensaje 10310-4
+10317 recibido: Mensaje 10313-5
+10317 recibido: Mensaje 10310-5
+10317 recibido: Mensaje 10311-5
+10317 recibido: Mensaje 10315-4
+10317 recibido: Mensaje 10308-4
+10317 recibido: Mensaje 10314-5
+10317 recibido: Mensaje 10312-8
+10317 recibido: Mensaje 10309-5
+10317 recibido: Mensaje 10316-4
+10317 recibido: Mensaje 10307-5
+10317 recibido: Mensaje 10316-5
+10317 recibido: Mensaje 10309-6
+10317 recibido: Mensaje 10313-6
+10317 recibido: Mensaje 10311-6
+10317 recibido: Mensaje 10316-6
+10317 recibido: Mensaje 10307-6
+10317 recibido: Mensaje 10310-6
+10317 recibido: Mensaje 10312-9
+10317 recibido: Mensaje 10310-7
+10317 recibido: Mensaje 10308-5
+10317 recibido: Mensaje 10313-7
+10317 recibido: Mensaje 10315-5
+10317 recibido: Mensaje 10315-6
+10317 recibido: Mensaje 10310-8
+10317 recibido: Mensaje 10314-6
+10317 recibido: Mensaje 10311-7
+10317 recibido: Mensaje 10307-7
+10317 recibido: Mensaje 10309-7
+10317 recibido: Mensaje 10316-7
+10317 recibido: Mensaje 10312-10
+10317 recibido: Mensaje 10313-8
+10317 recibido: Mensaje 10311-8
+10317 recibido: Mensaje 10308-6
+10317 recibido: Mensaje 10311-9
+10317 recibido: Mensaje 10314-7
+10317 recibido: Mensaje 10310-9
+10317 recibido: Mensaje 10307-8
+10317 recibido: Mensaje 10308-7
+10317 recibido: Mensaje 10316-8
+10317 recibido: Mensaje 10310-10
+10317 recibido: Mensaje 10309-8
+10317 recibido: Mensaje 10312-11
+10317 recibido: Mensaje 10314-8
+10317 recibido: Mensaje 10316-9
+10317 recibido: Mensaje 10313-9
+10317 recibido: Mensaje 10308-8
+10317 recibido: Mensaje 10315-7
+10317 recibido: Mensaje 10309-9
+10317 recibido: Mensaje 10310-11
+10317 recibido: Mensaje 10311-10
+10317 recibido: Mensaje 10309-10
+10317 recibido: Mensaje 10307-9
+10317 recibido: Mensaje 10314-9
+10317 recibido: Mensaje 10315-8
+10317 recibido: Mensaje 10308-9
+10317 recibido: Mensaje 10315-9
+10317 recibido: Mensaje 10311-11
+10317 recibido: Mensaje 10316-10
+10317 recibido: Mensaje 10313-10
+10317 recibido: Mensaje 10312-12
+10317 recibido: Mensaje 10310-12
+10317 recibido: Mensaje 10312-13
+10317 recibido: Mensaje 10314-10
+10317 recibido: Mensaje 10307-10
+10317 recibido: Mensaje 10313-11
+10317 recibido: Mensaje 10308-10
+10317 recibido: Mensaje 10309-11
+10317 recibido: Mensaje 10316-11
+10317 recibido: Mensaje 10315-10
+10317 recibido: Mensaje 10316-12
+10317 recibido: Mensaje 10311-12
+10317 recibido: Mensaje 10307-11
+10317 recibido: Mensaje 10311-13
+10317 recibido: Mensaje 10314-11
+10317 recibido: Mensaje 10312-14
+10317 recibido: Mensaje 10313-12
+10317 recibido: Mensaje 10315-11
+10317 recibido: Mensaje 10310-13
+10317 recibido: Mensaje 10316-13
+10317 recibido: Mensaje 10308-11
+10317 recibido: Mensaje 10313-13
+10317 recibido: Mensaje 10309-12
+10317 recibido: Mensaje 10313-14
+10317 recibido: Mensaje 10314-12
+10317 recibido: Terminado, se termina el programa
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+Error al enviar el mensaje: Invalid argument
+
+[2]   Exit 1                  ./send.out
+[3]   Exit 1                  ./send.out
+[4]   Exit 1                  ./send.out
+[5]   Exit 1                  ./send.out
+[6]   Exit 1                  ./send.out
+[7]   Done                    ./send.out
+[8]   Exit 1                  ./send.out
+[9]   Exit 1                  ./send.out
+[10]   Exit 1                  ./send.out
+[11]   Exit 1                  ./send.out
+[12]-  Done                    ./recieve.out
+\end{lstlisting}
