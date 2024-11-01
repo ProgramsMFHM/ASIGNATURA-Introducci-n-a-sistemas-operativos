@@ -14,3 +14,6 @@ Se profundiza además en la generación de números pseudoaleatorios comprendien
 
 ## Laboratorio N°2
 Dentro de la [Experiencia 2](laboratorio2/) se trabajó la creación y el manejo de procesos mediante la duplicación de procesos.
+
+## Laboratorio N°2
+Dentro de la [Experiencia 3](laboratorio3/) se trabajó la comunicación entre procesos mediante la transferencia de mensajes.
