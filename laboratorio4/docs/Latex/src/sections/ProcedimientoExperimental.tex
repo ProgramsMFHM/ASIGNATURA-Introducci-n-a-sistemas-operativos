@@ -1,0 +1,56 @@
+\section{Procedimiento experimental y Análisis }\label{sec:ProcedimientoExperimental}
+Para la realización de este experimento se utilizó como base el pseudocódigo entregado por el profesor, el cual se puede encontrar en \ref{lst:Pseudocodigo}. Con base en este, se realizó un programa en C, el cual utiliza las bibliotecas:
+\begin{itemize}
+    \item \texttt{semaphore.h}, encargada de proporcionar las funciones y estructuras necesarias para manejar semáforos.
+    \item \texttt{pthread.h}, encargada de proporcionar las funciones y estructuras necesarias para manejar hilos.
+    \item Demás bibliotecas estándar en el lenguaje C para entrada y salida, manejo de números aleatorios, etc$\cdots$
+\end{itemize}
+
+El programa realizado se encarga de inicializar a los ``Filósofos'' mediante el uso de un hilo para cada uno, convirtiendo a cada uno de estos en un proceso liviano encargado de realizar las acciones de pensar, comer y tomar los tenedores. Para la coordinación entre estos, se utilizan semáforos los cuales controlan el acceso a los tenedores, de tal manera que los filósofos no puedan tomar los tenedores al mismo tiempo.
+
+La ejecución del programa se realizó mediante impresiones por pantalla, las cuales van representando y detallando el estado en el cual se encuentra cada filósofo [THINKING, EATING, HUNGRY]. Además, se utilizó la función \texttt{sleep()} para simular el tiempo que tarda un filósofo en realizar cada acción (entre $1$ y $10$ segundos).
+
+\subsection{Afrontando el problema}
+\subsubsection*{Los tenedores han desaparecido}
+Para la solución del anterior problema no se tuvo en cuenta como tal la existencia de los tenedores, sino que se planteó el problema de la siguiente manera: ``Un filósofo no puede empezar a comer si alguno de los filósofos adyacentes está comiendo'', este enunciado, es equivalente al anteriormente mencionado pero permite una solución enfocada de otra manera.
+
+En particular esto se puede observar en la función \texttt{test()} del programa, la cual verifica si un filósofo está intentando comer, y si aquellos adyacentes están comiendo, en caso de que no lo estén el filósofo cambiara su estado a EATING y puede proceder a comer.
+
+\begin{lstlisting}[style=CodeStyle, caption={Función para revisar si filosofo i tiene la posibilidad de comer}, label={lst:FuncionTest}, language=C]
+void test(int ID){
+    // En caso de que tenga hambre compruebo si puedo comer.
+    if(ProgramInfo.state[ID] == HUNGRY){
+        if(ProgramInfo.state[LEFT] != EATING &&
+            ProgramInfo.state[RIGHT] != EATING
+        ){
+            // En caso de poder entonces indico que estoy comiendo
+            ProgramInfo.state[ID] = EATING;
+            // En caso de que estuviera bloqueado por esperar a que los demas terminen de comer entonces me desbloqueo
+            // Si no estoy bloqueado esta senhal evita que me bloquee por accion de la funcion "take\_forks()"
+            sem_post(&ProgramInfo.s[ID]);
+        }
+        else{
+            printf("Filosofo %d" ANSI_COLOR_RED " ESPERANDO" ANSI_COLOR_RESET "\n", ID);
+        }
+    }
+}
+\end{lstlisting}
+
+\subsubsection*{Manejo de los semáforos}
+El semáforo más utilizado en este programa es el \texttt{mutex}, que evita que una hebra cambie el estado del filósofo correspondiente otra está en este mismo asunto, lo que evita que ``los filósofos se confundan'' o ``realicen acciones simultáneas'' lo que podría llevar a errores en el código.
+
+Adicionalmente cada filósofo tiene su propio semáforo que permite controlar si está o no esperando a que el resto de los filósofos terminen de comer. Cuando un filósofo decide comer primero usa la función \texttt{test()} que, en caso de ser exitosa, llama a la función \texttt{sem\_post()} (UP), sin embargo en \textbf{cualquier caso} luego de hacer el test se llama a la función \texttt{sem\_wait()} (DOWN) lo que tendrá una de dos consecuencias:
+\begin{enumerate}
+    \item Si el filósofo logró ``tomar los tenedores'' en la función test(), entonces su semáforo tendrá el valor de $1$ por lo que el \texttt{sem\_wait()} \textbf{no bloqueará} el proceso, sino que este se seguirá ejecutando (procediendo a comer).
+    \item Si el filósofo no logró ``tomar los tenedores'', entonces su semáforo se mantendrá en $0$ y el \texttt{sem\_wait()} bloqueará el proceso hasta que ambos filósofos adyacentes no estén comiendo (Esto se maneja ya que cuando un filósofo termina de comer manda una señal a los adyacentes para usar la función \texttt{test()}, que provocará el desbloqueo \textbf{en caso de que sea necesario}).
+\end{enumerate}
+
+\begin{lstlisting}[style=CodeStyle, caption={Función para que un filosofo tome sus tenedores}, label={lst:FuncionTakeForks}, language=C]
+void take_forks(int ID){
+    sem_wait(&ProgramInfo.mutex);       // Entro en la seccion critica
+    ProgramInfo.state[ID] = HUNGRY;     // Indico que tengo hambre
+    test(ID);                           // Compruebo si puedo o no comer
+    sem_post(&ProgramInfo.mutex);       // Salgo de la seccion critica
+    sem_wait(&ProgramInfo.s[ID]);       // Me bloqueo en caso que no haya podido tomar los tenedores
+}
+\end{lstlisting}

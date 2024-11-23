@@ -1,0 +1,62 @@
+\section{Anexos}
+
+\begin{lstlisting}[style=CodeStyle, caption={Pseudocodigo del problema de los filósofos comensales}, label={lst:Pseudocodigo}]
+// Definiciones iniciales
+
+#define N 5 /* Numero de filosofos */
+#define LEFT (i-1)%N /* Vecino a la izquierda de i */
+#define RIGHT (i+1)%N /* Vecino a la derecha de i */
+#define THINKING 0 /* Filosofando */
+#define HUNGRY 1 /* Intentando comer */
+#define EATING 2 /* Comiendo */
+
+// Variables a utilizar
+typedef int semaphore; /* Semaforos como int */
+int state[N]; /* Estado de los filosofos */
+semaphore mutex = 1; /* Exclusion mutua */
+semaphore s[N]; /* Un semaforo por filosofo */
+
+// Funcion que ejecutaria el i-esimo filosofo
+philosopher(i)
+int i;
+{
+    while (TRUE) {
+    think();
+    take_forks(i); /* Toma dos tenedores o bloquea */
+    eat();
+    put_forks(i); /* Deja los tenedores */
+    }
+}
+
+// Funcion para que un filosofo tome sus tenedores
+take_forks(i)
+int i;
+{
+    down(mutex);
+    state[i] = HUNGRY;
+    test(i);
+    up(mutex);
+    down(s[i]);
+}
+
+// Funcion para revisar si filosofo i tiene la posibilidad de comer
+test(i)
+int i;
+{
+    if (state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING) {
+    state[i] = EATING;
+    up(s[i]);
+    }
+}
+
+// Funcion para devolver los tenedores del filosofo i a su lugar
+put_forks(i)
+int i;
+{
+    down(mutex);
+    state[i] = THINKING;
+    test(LEFT);
+    test(RIGHT);
+    up(mutex);
+}
+\end{lstlisting}

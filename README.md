@@ -17,3 +17,6 @@ Dentro de la [Experiencia 2](laboratorio2/) se trabajó la creación y el manejo
 
 ## Laboratorio N°3
 Dentro de la [Experiencia 3](laboratorio3/) se trabajó la comunicación entre procesos mediante la transferencia de mensajes.
+
+## Laboratorio N°4
+Dentro de la [Experiencia 4](laboratorio4/) se trabajó el **Problema de los filósofos** mediante el uso de semáforos y hebras con las bibliotecas `pthread` y `semaphore` de `C`.

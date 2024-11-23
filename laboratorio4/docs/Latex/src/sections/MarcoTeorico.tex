@@ -1,0 +1,45 @@
+\section{Marco teórico}\label{sec:MarcoTeorico}
+Los conceptos teóricos necesarios para el desarrollo de este trabajo son los siguientes:
+
+\subsection{Comunicación entre procesos}
+Por lo general, los proceso necesitan comunicarse para un correcto funcionamiento, un ejemplo util extraído del libro escrito por: \textcite{tanenbaum1997sistemas} es el siguiente: ``\textit{$\dots$en un conducto de shell, la salida del primer proceso debe pasarse al segundo proceso, y así sucesiva mente. Por tanto, es necesaria la comunicación entre procesos$\dots$}''
+
+La comunicación entre procesos o \textbf{IPC} revela tres problemas principales:
+\begin{itemize}
+    \item Como compartir información entre procesos.
+    \item Como sincronizar el trabajo de varios procesos.
+    \item Como manejar la concurrencia de procesos.
+\end{itemize}
+
+El presente informe busca comprender una de las técnicas para la solución de este tipo de situaciones presentadas entre procesos la cuál es el uso de \textbf{semáforos}.
+
+\subsection{Hilos: Memoria compartida}
+La comunicación entre procesos en muchas ocasiones requiere que los procesos compartan información lo cuál no siempre es sencillo o eficiente.
+
+Es por esta razón que existen los procesos livianos, también conocidos como hilos, o hebras que son partes de un programa que se ejecutan de forma independiente y que tienen la posibilidad de compartir memoria entre sí además de que el cambio de contexto entre ellos es más liviano para el sistema operativo en comparación a aquellos cambios de contexto de procesos pesados.
+
+Las hebras no son la única manera de compartir memoria entre procesos, sin embargo será aquella que se usará durante el presente informe.
+
+\subsection{Condiciones de carrera y concurrencia entre procesos}
+Se conoce como condición de carrera o de concurso a aquella situación situación en la que uno o más procesos leen o escriben algunos datos compartidos y el resultado final depende de cuál se ejecuta en un momento preciso.
+
+En particular se le llama \textbf{Sección Crítica} a aquella parte de un programa en que un proceso accesa a la memoria compartida con otro, momento en el cuál es probable encontrar una situación de carrera.
+
+\subsection{Semáforos}
+Existen diferentes técnicas que han sido creadas con el fin de superar las condiciones de carrera que se presentan en los sistemas operativos, algunas de ellas pueden ser:
+\begin{itemize}
+    \item Deshabilitación de Interrupciones
+    \item Variables de cierre
+    \item Alternancia estricta
+    \item La Solución Peterson o Dekker
+    \item Los TSL
+    \item Sleep \& Wakeup
+    \item Los semáforos
+    \item Los monitores
+\end{itemize}
+
+En particular en el presente informe y por sugerencia del académico será abordada con más profundidad la utilización se semáforos.
+
+Un semáforo es un tipo de variable especial que se utiliza para controlar el acceso a un recurso compartido. Un semáforo puede tener un valor entero no negativo. En el caso de que el valor sea mayor a $0$, el semáforo cuenta con señales de acceso (podrían entenderse como los cupos que tiene el semáforo para dejar procesos entrar a una sección crítica), en caso contrario, el semáforo cuenta con señales de espera. Por lo que si un proceso intenta pasar por este, se bloqueará hasta que el semáforo cuente con señales de acceso.
+
+Existen dos operaciones para los semáforos, UP y DOWN (también se pueden conocer como Wait y Post). La operación DOWN verifica si el valor del semáforo es mayor que $0$, en caso de serlo, decrementa el valor del semáforo y permite el acceso al recurso compartido. Si el valor del semáforo es $0$, el proceso se bloquea. La operación UP incrementa el valor del semáforo, si hay procesos bloqueados, a la hora de hacer un incremento uno de ellos será desbloqueado y podrá acceder al recurso compartido.

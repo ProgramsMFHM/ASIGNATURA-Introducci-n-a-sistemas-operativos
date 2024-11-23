@@ -1,0 +1,89 @@
+\section{Datos obtenidos}
+
+Al hacer una ejecución del programa realizado se obtiene la siguiente salida:
+\begin{lstlisting}[language=bash, style=CodeStyle, caption={Ejemplo de salida programa de los filosofos comensales}, label={lst:Salida}]
+Filosofo 0 PENSANDO
+Filosofo 1 PENSANDO
+Filosofo 2 PENSANDO
+Filosofo 3 PENSANDO
+Filosofo 4 PENSANDO
+Filosofo 2 COMIENDO
+Filosofo 0 COMIENDO
+Filosofo 3 ESPERANDO
+Filosofo 4 ESPERANDO
+Fin 2
+        Filosofo 2 prueba a 1
+        Filosofo 2 prueba a 3
+Filosofo 2 PENSANDO
+Filosofo 3 COMIENDO
+Filosofo 1 ESPERANDO
+Fin 0
+        Filosofo 0 prueba a 4
+        Filosofo 0 prueba a 1
+Filosofo 0 PENSANDO
+Filosofo 4 ESPERANDO
+Filosofo 1 COMIENDO
+Filosofo 2 ESPERANDO
+Filosofo 0 ESPERANDO
+Fin 3
+        Filosofo 3 prueba a 2
+        Filosofo 3 prueba a 4
+Filosofo 3 PENSANDO
+Filosofo 2 ESPERANDO
+Filosofo 4 COMIENDO
+Fin 4
+        Filosofo 4 prueba a 3
+        Filosofo 4 prueba a 0
+Filosofo 4 PENSANDO
+Filosofo 0 ESPERANDO
+Fin 1
+        Filosofo 1 prueba a 0
+        Filosofo 1 prueba a 2
+Filosofo 1 PENSANDO
+Filosofo 0 COMIENDO
+Filosofo 2 COMIENDO
+Filosofo 1 ESPERANDO
+Filosofo 3 ESPERANDO
+Filosofo 4 ESPERANDO
+Fin 0
+        Filosofo 0 prueba a 4
+        Filosofo 0 prueba a 1
+Filosofo 0 PENSANDO
+Filosofo 1 ESPERANDO
+Filosofo 4 COMIENDO
+Fin 2
+        Filosofo 2 prueba a 1
+        Filosofo 2 prueba a 3
+Filosofo 2 PENSANDO
+Filosofo 3 ESPERANDO
+Filosofo 1 COMIENDO
+\end{lstlisting}
+
+A continuación se analizará el código \ref{lst:Salida}:
+\begin{itemize}
+    \item De la línea $1$ a la $5$ todos los filósofos son inicializados y están pensando.
+    \item En la línea $6$ el filósofo $2$ empieza a comer.
+    \item En la línea $7$ el filósofo $0$ empieza a comer.
+    \item En la línea $8$ el filósofo $3$ quiere comer, pero queda en espera porque el filósofo $2$ está comiendo (línea $6$).
+    \item En la línea $9$ el filósofo $4$ quiere comer, pero queda en espera porque el filósofo $0$ está comiendo (línea $7$).
+    \item En la línea $10$ el filósofo $2$ termina de comer dado la posibilidad a $1$ y a $3$ de comer.
+    Ante esta iniciativa el filósofo $3$ empieza a comer pero el $1$ queda en espera porque el filósofo $0$ está comiendo (línea $7$).
+    En la línea $16$ el filósodo $0$ termina de comer dado la posibilidad a $4$ y a $1$ de comer.
+    Ante esta iniciativa el filósofo $4$ queda en espera porque el filósofo $3$ está comiendo (línea $14$) sin embargo el filósofo $1$ empieza a comer.
+    \item En la línea $22$ el filósofo $2$ quiere comer, pero queda en espera porque el filósofo $1$ está comiendo (línea $21$) y además el filósofo $3$ está comiendo (línea $14$).
+    \item En la línea $23$ el filósofo $0$ quiere comer, pero queda en espera porque el filósofo $1$ está comiendo.
+    \item En la línea $24$ el filósofo $3$ termina de comer dado la posibilidad a $2$ y a $4$ de comer.
+    Ante esta iniciativa el filósofo $2$ queda en espera porque el filósofo $1$ sigue comiendo (línea $21$), pero el filósofo $4$ puede empezar a comer.
+    \item En la línea $30$ el filósofo $4$ termina de comer dado la posibilidad a $3$ y a $0$ de comer.
+    Ante esta iniciativa el filósofo $3$ no reacciona porque está pensando (línea $27$), por otro lado el filósofo $0$ queda esperando porque el filósofo $1$ está comiendo (línea $21$).
+    \item En la línea $35$ el filósofo $1$ termina de comer dado la posibilidad a $0$ y a $2$ de comer.
+    Ante esta iniciativa ambos filósofos $0$ y $2$ empiezan a comer ya que esta era la restricción que tenían para ello.
+    \item En la línea $41$ el filosofo $1$ quiere comer, pero queda esperando porque el filósofo $0$ está comiendo (línea $39$) y el filósofo $2$ está comiendo (línea $40$).
+    \item En la línea $42$ el filosofo $3$ quiere comer, pero queda esperando porque el filósofo $2$ está comiendo (línea $40$).
+    \item En la línea $43$ el filosofo $4$ quiere comer, pero queda esperando porque el filósofo $0$ está comiendo (línea $39$).
+    \item En la línea $44$ el filosofo $0$ termina de comer dando la posibilidad a $4$ y a $1$ de comer.
+    Ante esta iniciativa el filósofo $1$ queda esperando porque el filósofo $2$ está comiendo (línea $40$), pero el filósofo $4$ puede empezar a comer.
+    \item En la línea $50$ el filosofo $2$ termina de comer dando la posibilidad a $1$ y a $3$ de comer.
+    Ante esta iniciativa el filósofo $3$ queda esperando porque el filósofo $4$ está comiendo (línea $49$), pero el filósofo $1$ puede empezar a comer.
+\end{itemize}
+Este programa continúa su ejecución de manera ``infinita'', logrando una correcta sincronización de los filósofos.
